@@ -1,0 +1,1910 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ForestDecision</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.1/css/all.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <style>
+        /* ==========================
+        RESET
+        ========================== */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Arial, Helvetica, sans-serif;
+        }
+
+        body {
+            background: #edf4ed;
+            color: #333;
+        }
+
+        /* ==========================
+        HEADER
+        ========================== */
+        header {
+            background: #1b5e20;
+            color: #fff;
+            padding: 15px 30px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, .2);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .logo i {
+            font-size: 45px;
+            color: #8bc34a;
+        }
+
+        .logo h1 {
+            font-size: 28px;
+        }
+
+        .logo p {
+            margin-top: 5px;
+            opacity: .9;
+            font-size: 14px;
+        }
+
+        .header-actions {
+            display: flex;
+            gap: 12px;
+            align-items: center;
+        }
+
+        .header-actions button {
+            background: rgba(255, 255, 255, 0.15);
+            color: white;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            padding: 10px 16px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: .3s;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .header-actions button:hover {
+            background: rgba(255, 255, 255, 0.25);
+        }
+
+        .menu-toggle {
+            display: none;
+            background: transparent;
+            border: none;
+            color: white;
+            font-size: 28px;
+            cursor: pointer;
+        }
+
+        /* ==========================
+        MAIN
+        ========================== */
+        main {
+            width: 95%;
+            max-width: 1300px;
+            margin: auto;
+            padding: 30px 0;
+        }
+
+        /* ==========================
+        CARDS
+        ========================== */
+        .cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .card {
+            background: white;
+            padding: 25px;
+            border-radius: 15px;
+            text-align: center;
+            box-shadow: 0 5px 12px rgba(0, 0, 0, .12);
+            transition: .3s;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+        }
+
+        .card i {
+            font-size: 40px;
+            color: #2e7d32;
+            margin-bottom: 10px;
+        }
+
+        .alerta i {
+            color: #ff9800;
+        }
+
+        .critica i {
+            color: #e53935;
+        }
+
+        .card h2 {
+            font-size: 35px;
+            margin: 10px 0;
+        }
+
+        .card span {
+            font-size: 14px;
+            color: #666;
+        }
+
+        /* ==========================
+        SEÇÕES
+        ========================== */
+        .formulario,
+        .tabela,
+        .recomendacao,
+        .mapa,
+        .pesquisa,
+        .grafico-section,
+        .resumo {
+            background: #fff;
+            padding: 25px;
+            border-radius: 15px;
+            margin-bottom: 30px;
+            box-shadow: 0 5px 12px rgba(0, 0, 0, .12);
+        }
+
+        h2 {
+            color: #1b5e20;
+            margin-bottom: 20px;
+            font-size: 22px;
+        }
+
+        h2 i {
+            margin-right: 10px;
+        }
+
+        /* ==========================
+        PESQUISA
+        ========================== */
+        #pesquisaMunicipio {
+            width: 100%;
+            padding: 15px;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            font-size: 16px;
+        }
+
+        #pesquisaMunicipio:focus {
+            outline: none;
+            border-color: #2e7d32;
+        }
+
+        /* ==========================
+        FORMULÁRIO
+        ========================== */
+        .grupo {
+            display: flex;
+            flex-direction: column;
+            margin-bottom: 18px;
+        }
+
+        .grupo label {
+            margin-bottom: 8px;
+            font-weight: bold;
+            font-size: 14px;
+        }
+
+        .grupo input,
+        .grupo select {
+            padding: 13px;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            font-size: 15px;
+        }
+
+        .grupo input:focus,
+        .grupo select:focus {
+            outline: none;
+            border-color: #2e7d32;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        button {
+            background: #2e7d32;
+            color: white;
+            border: none;
+            padding: 14px 24px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: .3s;
+            font-size: 15px;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        button:hover {
+            background: #1b5e20;
+        }
+
+        button.btn-secondary {
+            background: #555;
+        }
+
+        button.btn-secondary:hover {
+            background: #333;
+        }
+
+        /* ==========================
+        MAPAS - NOVO LAYOUT
+        ========================== */
+        .mapas-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-top: 15px;
+        }
+
+        .mapa-item {
+            position: relative;
+            border-radius: 10px;
+            border: 2px solid #ddd;
+            overflow: hidden;
+            background: #f5faf5;
+            cursor: pointer;
+            transition: .3s;
+        }
+
+        .mapa-item:hover {
+            border-color: #2e7d32;
+            transform: scale(1.01);
+        }
+
+        .mapa-item img {
+            width: 100%;
+            height: 300px;
+            object-fit: cover;
+            display: block;
+            transition: .3s;
+        }
+
+        .mapa-item .mapa-legenda {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: rgba(0, 0, 0, 0.7);
+            color: white;
+            padding: 10px 15px;
+            font-size: 14px;
+            text-align: center;
+        }
+
+        .mapa-item .mapa-legenda i {
+            margin-right: 8px;
+            color: #8bc34a;
+        }
+
+        .mapa-item .zoom-hint {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: rgba(0, 0, 0, 0.6);
+            color: white;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            opacity: 0;
+            transition: .3s;
+        }
+
+        .mapa-item:hover .zoom-hint {
+            opacity: 1;
+        }
+
+        /* ==========================
+        MODAL PARA ZOOM DAS IMAGENS
+        ========================== */
+        .modal-zoom {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.9);
+            justify-content: center;
+            align-items: center;
+            z-index: 2000;
+            padding: 20px;
+        }
+
+        .modal-zoom.active {
+            display: flex;
+        }
+
+        .modal-zoom-content {
+            position: relative;
+            max-width: 90%;
+            max-height: 90%;
+            background: white;
+            border-radius: 10px;
+            padding: 20px;
+            animation: zoomIn .3s ease;
+        }
+
+        @keyframes zoomIn {
+            from {
+                transform: scale(0.8);
+                opacity: 0;
+            }
+            to {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+
+        .modal-zoom-content img {
+            max-width: 100%;
+            max-height: 80vh;
+            display: block;
+            border-radius: 8px;
+        }
+
+        .modal-zoom-content .modal-zoom-titulo {
+            text-align: center;
+            padding: 10px 0 5px 0;
+            font-size: 18px;
+            color: #1b5e20;
+            font-weight: bold;
+        }
+
+        .modal-zoom-fechar {
+            position: absolute;
+            top: -15px;
+            right: -15px;
+            width: 40px;
+            height: 40px;
+            background: #d32f2f;
+            color: white;
+            border: none;
+            border-radius: 50%;
+            font-size: 24px;
+            cursor: pointer;
+            transition: .3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+        }
+
+        .modal-zoom-fechar:hover {
+            background: #b71c1c;
+            transform: rotate(90deg);
+        }
+
+        /* ==========================
+        RECOMENDAÇÃO
+        ========================== */
+        #resultado {
+            background: #f1f8e9;
+            padding: 20px;
+            border-left: 6px solid #4caf50;
+            border-radius: 10px;
+            line-height: 1.8;
+        }
+
+        #resultado hr {
+            margin: 12px 0;
+            border: none;
+            border-top: 1px solid #c8e6c9;
+        }
+
+        /* ==========================
+        GRÁFICO - MELHORADO
+        ========================== */
+        .grafico-container {
+            width: 100%;
+            max-width: 800px;
+            margin: 0 auto;
+            background: #ffffff;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+        }
+
+        #graficoCanvas {
+            width: 100%;
+            height: auto;
+            background: #ffffff;
+            border-radius: 8px;
+        }
+
+        .grafico-legenda {
+            display: flex;
+            justify-content: center;
+            gap: 25px;
+            flex-wrap: wrap;
+            margin-top: 15px;
+            padding: 10px;
+            background: #f8faf8;
+            border-radius: 8px;
+        }
+
+        .grafico-legenda-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 13px;
+            color: #333;
+        }
+
+        .grafico-legenda-cor {
+            width: 18px;
+            height: 18px;
+            border-radius: 4px;
+        }
+
+        /* ==========================
+        RESUMO
+        ========================== */
+        .resumo-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+        }
+
+        .resumo-item {
+            text-align: center;
+            padding: 15px;
+            background: #f5faf5;
+            border-radius: 10px;
+        }
+
+        .resumo-item .numero {
+            font-size: 28px;
+            font-weight: bold;
+            color: #1b5e20;
+        }
+
+        .resumo-item .rotulo {
+            font-size: 14px;
+            color: #666;
+            margin-top: 5px;
+        }
+
+        /* ==========================
+        TABELA
+        ========================== */
+        .topoTabela {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .tabela-actions {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 14px;
+        }
+
+        thead {
+            background: #2e7d32;
+            color: white;
+        }
+
+        th {
+            padding: 12px 10px;
+            text-align: center;
+        }
+
+        td {
+            padding: 12px 10px;
+            text-align: center;
+            border-bottom: 1px solid #ddd;
+        }
+
+        tbody tr {
+            cursor: pointer;
+            transition: .3s;
+        }
+
+        tbody tr:hover {
+            background: #f3f3f3;
+        }
+
+        /* ==========================
+        PRIORIDADES
+        ========================== */
+        .alta {
+            color: #d32f2f;
+            font-weight: bold;
+        }
+
+        .media {
+            color: #ff9800;
+            font-weight: bold;
+        }
+
+        .baixa {
+            color: #2e7d32;
+            font-weight: bold;
+        }
+
+        /* ==========================
+        BOTÕES AÇÕES
+        ========================== */
+        .btn-acao {
+            padding: 6px 10px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 13px;
+            transition: .3s;
+            margin: 0 3px;
+        }
+
+        .btn-editar {
+            background: #2196f3;
+            color: white;
+        }
+
+        .btn-editar:hover {
+            background: #1976d2;
+        }
+
+        .btn-excluir {
+            background: #d32f2f;
+            color: white;
+        }
+
+        .btn-excluir:hover {
+            background: #b71c1c;
+        }
+
+        /* ==========================
+        MODAL
+        ========================== */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, .5);
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+
+        .modal-content {
+            background: white;
+            width: 500px;
+            max-width: 92%;
+            border-radius: 12px;
+            padding: 30px;
+            position: relative;
+            animation: aparecer .3s;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+
+        @keyframes aparecer {
+            from {
+                transform: scale(.8);
+                opacity: 0;
+            }
+            to {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+
+        .fechar {
+            position: absolute;
+            right: 20px;
+            top: 15px;
+            font-size: 30px;
+            cursor: pointer;
+            transition: .3s;
+        }
+
+        .fechar:hover {
+            transform: rotate(90deg);
+        }
+
+        #detalhesArea p {
+            margin: 8px 0;
+        }
+
+        #detalhesArea hr {
+            margin: 15px 0;
+            border: none;
+            border-top: 1px solid #e0e0e0;
+        }
+
+        /* ==========================
+        HELP MODAL
+        ========================== */
+        .help-steps {
+            list-style: none;
+            padding: 0;
+        }
+
+        .help-steps li {
+            padding: 12px 15px;
+            margin-bottom: 10px;
+            background: #f5faf5;
+            border-radius: 8px;
+            border-left: 4px solid #2e7d32;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .help-steps li i {
+            color: #2e7d32;
+            font-size: 20px;
+            width: 30px;
+        }
+
+        /* ==========================
+        FOOTER
+        ========================== */
+        footer {
+            background: #1b5e20;
+            color: white;
+            text-align: center;
+            padding: 20px;
+            margin-top: 30px;
+        }
+
+        /* ==========================
+        RESPONSIVO
+        ========================== */
+        @media(max-width: 992px) {
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+
+            .mapas-container {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media(max-width: 768px) {
+            header {
+                padding: 12px 20px;
+            }
+
+            .logo h1 {
+                font-size: 22px;
+            }
+            .logo p {
+                font-size: 12px;
+            }
+            .logo i {
+                font-size: 35px;
+            }
+
+            .menu-toggle {
+                display: block;
+            }
+
+            .header-actions {
+                display: none;
+                width: 100%;
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .header-actions.active {
+                display: flex;
+            }
+
+            .header-actions button {
+                justify-content: center;
+                padding: 12px;
+            }
+
+            .cards {
+                grid-template-columns: 1fr 1fr;
+            }
+
+            .topoTabela {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .tabela-actions {
+                flex-direction: column;
+            }
+
+            table {
+                display: block;
+                overflow-x: auto;
+                font-size: 12px;
+            }
+
+            th,
+            td {
+                padding: 8px 6px;
+                min-width: 80px;
+            }
+
+            .resumo-grid {
+                grid-template-columns: 1fr 1fr;
+            }
+
+            .modal-content {
+                padding: 20px;
+                width: 95%;
+            }
+
+            .grafico-legenda {
+                gap: 15px;
+                font-size: 12px;
+            }
+
+            .mapa-item img {
+                height: 200px;
+            }
+
+            .modal-zoom-content {
+                padding: 15px;
+            }
+
+            .modal-zoom-fechar {
+                width: 35px;
+                height: 35px;
+                font-size: 20px;
+                top: -10px;
+                right: -10px;
+            }
+        }
+
+        @media(max-width: 480px) {
+            .cards {
+                grid-template-columns: 1fr;
+            }
+
+            .card h2 {
+                font-size: 28px;
+            }
+
+            .logo {
+                gap: 10px;
+            }
+            .logo i {
+                font-size: 28px;
+            }
+            .logo h1 {
+                font-size: 18px;
+            }
+
+            .resumo-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .formulario,
+            .tabela,
+            .recomendacao,
+            .mapa,
+            .pesquisa,
+            .grafico-section,
+            .resumo {
+                padding: 15px;
+            }
+
+            button {
+                width: 100%;
+                justify-content: center;
+            }
+
+            .mapa-item img {
+                height: 150px;
+            }
+
+            .mapa-item .mapa-legenda {
+                font-size: 12px;
+                padding: 6px 10px;
+            }
+
+            .mapa-item .zoom-hint {
+                font-size: 10px;
+                padding: 4px 10px;
+            }
+
+            .modal-zoom-content {
+                padding: 10px;
+            }
+
+            .modal-zoom-content .modal-zoom-titulo {
+                font-size: 14px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- ==========================
+    HEADER
+    ========================== -->
+    <header>
+        <div class="logo">
+            <i class="fa-solid fa-tree"></i>
+            <div>
+                <h1>ForestDecision</h1>
+                <p>Sistema de Apoio à Decisão para Identificação de Áreas com Desmatamento</p>
+            </div>
+        </div>
+
+        <button class="menu-toggle" onclick="toggleMenu()">
+            <i class="fa-solid fa-bars"></i>
+        </button>
+
+        <div class="header-actions" id="headerActions">
+            <button onclick="mostrarAjuda()">
+                <i class="fa-solid fa-circle-question"></i> Ajuda
+            </button>
+            <button onclick="gerarPDF()">
+                <i class="fa-solid fa-file-pdf"></i> PDF
+            </button>
+        </div>
+    </header>
+
+    <main>
+
+        <!-- ==========================
+        CARDS
+        ========================== -->
+        <section class="cards">
+            <div class="card">
+                <i class="fa-solid fa-map-location-dot"></i>
+                <h2 id="totalAreas">0</h2>
+                <span>Áreas Monitoradas</span>
+            </div>
+            <div class="card alerta">
+                <i class="fa-solid fa-triangle-exclamation"></i>
+                <h2 id="totalAlertas">0</h2>
+                <span>Alertas</span>
+            </div>
+            <div class="card critica">
+                <i class="fa-solid fa-fire"></i>
+                <h2 id="totalCriticas">0</h2>
+                <span>Áreas Críticas</span>
+            </div>
+        </section>
+
+        <!-- ==========================
+        PESQUISA
+        ========================== -->
+        <section class="pesquisa">
+            <h2><i class="fa-solid fa-search"></i> Pesquisar Município</h2>
+            <input type="text" id="pesquisaMunicipio" placeholder="Digite o nome do município...">
+        </section>
+
+        <!-- ==========================
+        FORMULÁRIO
+        ========================== -->
+        <section class="formulario">
+            <h2><i class="fa-solid fa-plus-circle"></i> Cadastrar Nova Área</h2>
+            <form id="formArea">
+                <div class="form-row">
+                    <div class="grupo">
+                        <label>Nome da Área</label>
+                        <input type="text" id="nome" required placeholder="Ex: Fazenda Boa Vista">
+                    </div>
+                    <div class="grupo">
+                        <label>Município</label>
+                        <select id="municipio" required>
+                            <option value="">Selecione um município</option>
+                            <option value="Capitão Poço">Capitão Poço</option>
+                            <option value="Garrafão do Norte">Garrafão do Norte</option>
+                            <option value="Nova Esperança do Piriá">Nova Esperança do Piriá</option>
+                            <option value="Irituia">Irituia</option>
+                            <option value="Ourém">Ourém</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="grupo">
+                        <label>Estado</label>
+                        <select id="estado">
+                            <option value="Pará">Pará</option>
+                        </select>
+                    </div>
+                    <div class="grupo">
+                        <label>Área Desmatada (hectares)</label>
+                        <input type="number" id="hectares" required placeholder="Ex: 75" min="0">
+                    </div>
+                </div>
+                <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+                    <button type="submit">
+                        <i class="fa-solid fa-plus"></i> Cadastrar Área
+                    </button>
+                    <button type="button" class="btn-secondary" onclick="cancelarEdicao()" id="btnCancelar" style="display:none;">
+                        <i class="fa-solid fa-xmark"></i> Cancelar Edição
+                    </button>
+                </div>
+                <input type="hidden" id="editIndex" value="-1">
+            </form>
+        </section>
+
+        <!-- ==========================
+        MAPAS - DOIS MAPAS LADO A LADO
+        ========================== -->
+        <section class="mapa">
+            <h2><i class="fa-solid fa-map"></i> Mapas da Região Monitorada</h2>
+            <div class="mapas-container">
+                <!-- Mapa 1: 5 Cidades -->
+                <div class="mapa-item" onclick="abrirZoom('mapa5')">
+                    <img src="img/mapa5.png" 
+                         alt="Mapa com as 5 cidades monitoradas" 
+                         id="mapa5"
+                         onerror="this.src='data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%22800%22 height=%22300%22%3E%3Crect width=%22800%22 height=%22300%22 fill=%22%23e8f5e9%22/%3E%3Ctext x=%22400%22 y=%22140%22 text-anchor=%22middle%22 font-size=%2220%22 fill=%22%232e7d32%22 font-weight=%22bold%22%3E📍 Mapa das 5 Cidades%3C/text%3E%3Ctext x=%22400%22 y=%22180%22 text-anchor=%22middle%22 font-size=%2214%22 fill=%22%23555%22%3ECapitão Poço • Garrafão do Norte%3C/text%3E%3Ctext x=%22400%22 y=%22200%22 text-anchor=%22middle%22 font-size=%2214%22 fill=%22%23555%22%3ENova Esperança do Piriá • Irituia • Ourém%3C/text%3E%3C/svg%3E'">
+                    <div class="mapa-legenda">
+                        <i class="fa-solid fa-location-dot"></i> Municípios Monitorados: Capitão Poço, Garrafão do Norte, Nova Esperança do Piriá, Irituia e Ourém
+                    </div>
+                    <div class="zoom-hint">
+                        <i class="fa-solid fa-magnifying-glass-plus"></i> Clique para ampliar
+                    </div>
+                </div>
+
+                <!-- Mapa 2: Desmatamento Mapeado -->
+                <div class="mapa-item" onclick="abrirZoom('mapaverde')">
+                    <img src="img/mapaverde.png" 
+                         alt="Mapa de desmatamento mapeado" 
+                         id="mapaverde"
+                         onerror="this.src='data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%22800%22 height=%22300%22%3E%3Crect width=%22800%22 height=%22300%22 fill=%22%23e8f5e9%22/%3E%3Ctext x=%22400%22 y=%22140%22 text-anchor=%22middle%22 font-size=%2220%22 fill=%22%23d32f2f%22 font-weight=%22bold%22%3E🌳 Mapa de Desmatamento%3C/text%3E%3Ctext x=%22400%22 y=%22180%22 text-anchor=%22middle%22 font-size=%2214%22 fill=%22%23555%22%3EÁreas com alerta de desmatamento%3C/text%3E%3Ctext x=%22400%22 y=%22200%22 text-anchor=%22middle%22 font-size=%2214%22 fill=%22%23555%22%3EMonitoramento via satélite%3C/text%3E%3C/svg%3E'">
+                    <div class="mapa-legenda">
+                        <i class="fa-solid fa-triangle-exclamation"></i> Áreas com Desmatamento Mapeado - Monitoramento via Satélite
+                    </div>
+                    <div class="zoom-hint">
+                        <i class="fa-solid fa-magnifying-glass-plus"></i> Clique para ampliar
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ==========================
+        MODAL ZOOM DAS IMAGENS
+        ========================== -->
+        <div id="modalZoom" class="modal-zoom" onclick="fecharZoom(event)">
+            <div class="modal-zoom-content" onclick="event.stopPropagation()">
+                <button class="modal-zoom-fechar" onclick="fecharZoom()">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+                <div class="modal-zoom-titulo" id="modalZoomTitulo">Mapa</div>
+                <img id="modalZoomImg" src="" alt="Mapa ampliado">
+            </div>
+        </div>
+
+        <!-- ==========================
+        RECOMENDAÇÃO
+        ========================== -->
+        <section class="recomendacao">
+            <h2><i class="fa-solid fa-robot"></i> Recomendação do Sistema (SAD)</h2>
+            <div id="resultado">
+                Cadastre uma área para receber uma recomendação automática.
+            </div>
+        </section>
+
+        <!-- ==========================
+        GRÁFICO - MELHORADO
+        ========================== -->
+        <section class="grafico-section">
+            <h2><i class="fa-solid fa-chart-bar"></i> Gráfico de Desmatamento por Município</h2>
+            <div class="grafico-container">
+                <canvas id="graficoCanvas" width="800" height="400"></canvas>
+                <div class="grafico-legenda">
+                    <div class="grafico-legenda-item">
+                        <div class="grafico-legenda-cor" style="background: #1b5e20;"></div>
+                        <span>Prioridade Alta (≥100 ha)</span>
+                    </div>
+                    <div class="grafico-legenda-item">
+                        <div class="grafico-legenda-cor" style="background: #ff9800;"></div>
+                        <span>Prioridade Média (50-99 ha)</span>
+                    </div>
+                    <div class="grafico-legenda-item">
+                        <div class="grafico-legenda-cor" style="background: #4caf50;"></div>
+                        <span>Prioridade Baixa (&lt;50 ha)</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ==========================
+        RESUMO
+        ========================== -->
+        <section class="resumo">
+            <h2><i class="fa-solid fa-chart-simple"></i> Resumo Estatístico</h2>
+            <div class="resumo-grid">
+                <div class="resumo-item">
+                    <div class="numero" id="totalHectares">0</div>
+                    <div class="rotulo">🌳 Total de Hectares Desmatados</div>
+                </div>
+                <div class="resumo-item">
+                    <div class="numero" id="totalMunicipios">0</div>
+                    <div class="rotulo">📍 Municípios Afetados</div>
+                </div>
+                <div class="resumo-item">
+                    <div class="numero" id="mediaDesmatamento">0</div>
+                    <div class="rotulo">📊 Média de Hectares por Área</div>
+                </div>
+                <div class="resumo-item">
+                    <div class="numero" id="maiorArea">0</div>
+                    <div class="rotulo">🔺 Maior Área Desmatada (ha)</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ==========================
+        TABELA
+        ========================== -->
+        <section class="tabela">
+            <div class="topoTabela">
+                <h2><i class="fa-solid fa-table"></i> Áreas Monitoradas</h2>
+                <div class="tabela-actions">
+                    <button onclick="gerarPDF()">
+                        <i class="fa-solid fa-file-pdf"></i> PDF
+                    </button>
+                </div>
+            </div>
+            <div style="overflow-x: auto;">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Área</th>
+                            <th>Município</th>
+                            <th>Estado</th>
+                            <th>Hectares</th>
+                            <th>Prioridade</th>
+                            <th>Data</th>
+                            <th>Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody id="listaAreas">
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- ==========================
+    MODAL DETALHES
+    ========================== -->
+    <div id="modalArea" class="modal">
+        <div class="modal-content">
+            <span class="fechar" onclick="fecharModal()">&times;</span>
+            <h2><i class="fa-solid fa-circle-info"></i> Informações da Área</h2>
+            <div id="detalhesArea"></div>
+        </div>
+    </div>
+
+    <!-- ==========================
+    MODAL AJUDA
+    ========================== -->
+    <div id="modalAjuda" class="modal">
+        <div class="modal-content">
+            <span class="fechar" onclick="fecharAjuda()">&times;</span>
+            <h2><i class="fa-solid fa-circle-question"></i> Como usar o ForestDecision</h2>
+            <ul class="help-steps">
+                <li>
+                    <i class="fa-solid fa-1"></i>
+                    <div><strong>Cadastrar Área</strong> - Preencha o formulário com nome, município, estado e hectares desmatados. Clique em "Cadastrar Área".</div>
+                </li>
+                <li>
+                    <i class="fa-solid fa-2"></i>
+                    <div><strong>Prioridade Automática</strong> - O sistema calcula a prioridade: <span class="alta">Alta</span> (≥100ha), <span class="media">Média</span> (50-99ha) ou <span class="baixa">Baixa</span> (&lt;50ha).</div>
+                </li>
+                <li>
+                    <i class="fa-solid fa-3"></i>
+                    <div><strong>Recomendação</strong> - Após cadastrar, veja a recomendação personalizada do sistema na seção "Recomendação".</div>
+                </li>
+                <li>
+                    <i class="fa-solid fa-4"></i>
+                    <div><strong>Pesquisar</strong> - Use o campo de pesquisa para filtrar áreas por município.</div>
+                </li>
+                <li>
+                    <i class="fa-solid fa-5"></i>
+                    <div><strong>Visualizar Detalhes</strong> - Clique em qualquer linha da tabela para ver informações completas.</div>
+                </li>
+                <li>
+                    <i class="fa-solid fa-6"></i>
+                    <div><strong>Editar</strong> - Clique no ícone <i class="fa-solid fa-pen" style="color:#2196f3;"></i> para editar uma área existente.</div>
+                </li>
+                <li>
+                    <i class="fa-solid fa-7"></i>
+                    <div><strong>Excluir</strong> - Clique no ícone <i class="fa-solid fa-trash" style="color:#d32f2f;"></i> para remover uma área.</div>
+                </li>
+                <li>
+                    <i class="fa-solid fa-8"></i>
+                    <div><strong>Relatórios</strong> - Baixe relatórios em <strong>PDF</strong> para análise externa.</div>
+                </li>
+                <li>
+                    <i class="fa-solid fa-9"></i>
+                    <div><strong>Gráfico</strong> - Visualize os dados de desmatamento agrupados por município.</div>
+                </li>
+                <li>
+                    <i class="fa-solid fa-10"></i>
+                    <div><strong>Resumo</strong> - Acompanhe estatísticas gerais como total de hectares e municípios afetados.</div>
+                </li>
+                <li>
+                    <i class="fa-solid fa-11"></i>
+                    <div><strong>Mapas</strong> - Clique nos mapas para ampliar e visualizar detalhes das áreas monitoradas.</div>
+                </li>
+            </ul>
+            <br>
+            <p style="text-align:center; color:#666;">Os dados são salvos automaticamente no seu navegador.</p>
+        </div>
+    </div>
+
+    <footer>
+        ForestDecision © 2026
+        <br>
+        Protótipo desenvolvido para a disciplina de Sistemas de Apoio à Decisão.
+    </footer>
+
+    <script>
+        // ==========================
+        // FORESTDECISION - COMPLETO
+        // ==========================
+
+        let areas = JSON.parse(localStorage.getItem("areas")) || [];
+
+        const form = document.getElementById("formArea");
+        const listaAreas = document.getElementById("listaAreas");
+        const totalAreas = document.getElementById("totalAreas");
+        const totalAlertas = document.getElementById("totalAlertas");
+        const totalCriticas = document.getElementById("totalCriticas");
+        const resultado = document.getElementById("resultado");
+        const pesquisa = document.getElementById("pesquisaMunicipio");
+        const editIndex = document.getElementById("editIndex");
+        const btnCancelar = document.getElementById("btnCancelar");
+
+        // ==========================
+        // SALVAR
+        // ==========================
+        function salvar() {
+            localStorage.setItem("areas", JSON.stringify(areas));
+        }
+
+        // ==========================
+        // PRIORIDADE
+        // ==========================
+        function calcularPrioridade(hectares) {
+            hectares = Number(hectares);
+            if (hectares >= 100) return "Alta";
+            if (hectares >= 50) return "Média";
+            return "Baixa";
+        }
+
+        // ==========================
+        // DATA ATUAL
+        // ==========================
+        function dataAtual() {
+            return new Date().toLocaleDateString('pt-BR');
+        }
+
+        // ==========================
+        // RECOMENDAÇÃO
+        // ==========================
+        function gerarRecomendacao(area) {
+            if (!area) {
+                resultado.innerHTML = "Cadastre uma área para receber uma recomendação automática.";
+                return;
+            }
+
+            const prioridade = area.prioridade;
+            let cor, icone, acoes;
+
+            if (prioridade == "Alta") {
+                cor = "#d32f2f";
+                icone = "🔴";
+                acoes = `
+                    ✔ Fiscalização imediata.<br>
+                    ✔ Solicitar imagens de satélite.<br>
+                    ✔ Enviar equipe de campo.<br>
+                    ✔ Notificar órgãos ambientais.
+                `;
+            } else if (prioridade == "Média") {
+                cor = "#ff9800";
+                icone = "🟡";
+                acoes = `
+                    ✔ Agendar fiscalização.<br>
+                    ✔ Continuar monitoramento.<br>
+                    ✔ Coletar dados adicionais.
+                `;
+            } else {
+                cor = "#2e7d32";
+                icone = "🟢";
+                acoes = `
+                    ✔ Apenas monitoramento.<br>
+                    ✔ Atualizar dados periodicamente.
+                `;
+            }
+
+            // Salvar a recomendação junto com a área
+            area.recomendacao = `${icone} PRIORIDADE ${prioridade.toUpperCase()}\n\n` +
+                `Área: ${area.nome}\n` +
+                `Município: ${area.municipio}\n` +
+                `Estado: ${area.estado}\n` +
+                `Área Desmatada: ${area.hectares} ha\n` +
+                `Data Cadastro: ${area.dataCadastro || '---'}\n\n` +
+                acoes.replace(/<br>/g, '').trim();
+
+            resultado.innerHTML = `
+                <h3 style="color:${cor}">${icone} PRIORIDADE ${prioridade.toUpperCase()}</h3>
+                <p><b>Área:</b> ${area.nome}</p>
+                <p><b>Município:</b> ${area.municipio}</p>
+                <p><b>Estado:</b> ${area.estado}</p>
+                <p><b>Área Desmatada:</b> ${area.hectares} ha</p>
+                <p><b>Data Cadastro:</b> ${area.dataCadastro || '---'}</p>
+                <hr>
+                <p>${acoes}</p>
+            `;
+
+            salvar();
+        }
+
+        // ==========================
+        // CARDS
+        // ==========================
+        function atualizarCards() {
+            totalAreas.innerHTML = areas.length;
+            let alertas = 0;
+            let criticas = 0;
+            areas.forEach(area => {
+                if (area.prioridade != "Baixa") alertas++;
+                if (area.prioridade == "Alta") criticas++;
+            });
+            totalAlertas.innerHTML = alertas;
+            totalCriticas.innerHTML = criticas;
+        }
+
+        // ==========================
+        // RESUMO
+        // ==========================
+        function atualizarResumo() {
+            if (areas.length === 0) {
+                document.getElementById('totalHectares').textContent = '0';
+                document.getElementById('totalMunicipios').textContent = '0';
+                document.getElementById('mediaDesmatamento').textContent = '0';
+                document.getElementById('maiorArea').textContent = '0';
+                return;
+            }
+
+            const totalHa = areas.reduce((acc, a) => acc + Number(a.hectares), 0);
+            const municipios = new Set(areas.map(a => a.municipio));
+            const media = (totalHa / areas.length).toFixed(1);
+            const maior = Math.max(...areas.map(a => Number(a.hectares)));
+
+            document.getElementById('totalHectares').textContent = totalHa.toLocaleString();
+            document.getElementById('totalMunicipios').textContent = municipios.size;
+            document.getElementById('mediaDesmatamento').textContent = media;
+            document.getElementById('maiorArea').textContent = maior;
+        }
+
+        // ==========================
+        // GRÁFICO - MELHORADO
+        // ==========================
+        function gerarGrafico() {
+            const canvas = document.getElementById('graficoCanvas');
+            const ctx = canvas.getContext('2d');
+            const width = canvas.width;
+            const height = canvas.height;
+
+            ctx.clearRect(0, 0, width, height);
+
+            // Fundo
+            const gradiente = ctx.createLinearGradient(0, 0, 0, height);
+            gradiente.addColorStop(0, '#f8faf8');
+            gradiente.addColorStop(1, '#ffffff');
+            ctx.fillStyle = gradiente;
+            ctx.fillRect(0, 0, width, height);
+
+            if (areas.length === 0) {
+                ctx.fillStyle = '#999';
+                ctx.font = '20px Arial';
+                ctx.textAlign = 'center';
+                ctx.fillText('📊 Nenhum dado para exibir', width / 2, height / 2);
+                return;
+            }
+
+            // Agrupar por município
+            const dados = {};
+            areas.forEach(area => {
+                const key = area.municipio;
+                if (!dados[key]) {
+                    dados[key] = {
+                        total: 0,
+                        prioridades: { Alta: 0, Média: 0, Baixa: 0 }
+                    };
+                }
+                dados[key].total += Number(area.hectares);
+                dados[key].prioridades[area.prioridade] += Number(area.hectares);
+            });
+
+            const municipios = Object.keys(dados);
+            const valores = municipios.map(m => dados[m].total);
+
+            // Margens
+            const margin = { top: 40, right: 30, bottom: 80, left: 70 };
+            const chartWidth = width - margin.left - margin.right;
+            const chartHeight = height - margin.top - margin.bottom;
+
+            const maxValor = Math.max(...valores) * 1.15;
+            const barWidth = Math.min(chartWidth / municipios.length * 0.6, 70);
+            const spacing = chartWidth / municipios.length;
+
+            // Título
+            ctx.fillStyle = '#1b5e20';
+            ctx.font = 'bold 18px Arial';
+            ctx.textAlign = 'center';
+            ctx.fillText('Desmatamento por Município (hectares)', width / 2, 28);
+
+            // Eixo Y
+            ctx.strokeStyle = '#bdbdbd';
+            ctx.lineWidth = 1.5;
+            ctx.beginPath();
+            ctx.moveTo(margin.left, margin.top);
+            ctx.lineTo(margin.left, margin.top + chartHeight);
+            ctx.stroke();
+
+            // Linhas horizontais e valores
+            const numLinhas = 6;
+            for (let i = 0; i <= numLinhas; i++) {
+                const y = margin.top + chartHeight - (i / numLinhas) * chartHeight;
+                const valor = (i / numLinhas) * maxValor;
+
+                ctx.strokeStyle = i === 0 ? '#bdbdbd' : '#e8e8e8';
+                ctx.lineWidth = i === 0 ? 1.5 : 1;
+                ctx.setLineDash(i === 0 ? [] : [4, 4]);
+                ctx.beginPath();
+                ctx.moveTo(margin.left, y);
+                ctx.lineTo(margin.left + chartWidth, y);
+                ctx.stroke();
+                ctx.setLineDash([]);
+
+                ctx.fillStyle = '#666';
+                ctx.font = '12px Arial';
+                ctx.textAlign = 'right';
+                ctx.fillText(Math.round(valor), margin.left - 10, y + 4);
+            }
+
+            // Eixo X
+            ctx.strokeStyle = '#bdbdbd';
+            ctx.lineWidth = 1.5;
+            ctx.beginPath();
+            ctx.moveTo(margin.left, margin.top + chartHeight);
+            ctx.lineTo(margin.left + chartWidth, margin.top + chartHeight);
+            ctx.stroke();
+
+            // Cores por prioridade
+            const cores = {
+                'Alta': '#d32f2f',
+                'Média': '#ff9800',
+                'Baixa': '#4caf50'
+            };
+
+            // Desenhar barras empilhadas
+            municipios.forEach((municipio, i) => {
+                const x = margin.left + i * spacing + (spacing - barWidth) / 2;
+                const prioridades = dados[municipio].prioridades;
+                const total = dados[municipio].total;
+
+                // Calcular alturas
+                const altas = (prioridades.Alta / maxValor) * chartHeight;
+                const medias = (prioridades.Média / maxValor) * chartHeight;
+                const baixas = (prioridades.Baixa / maxValor) * chartHeight;
+
+                let yStart = margin.top + chartHeight;
+
+                // Barra - Baixa (base)
+                if (baixas > 0) {
+                    ctx.fillStyle = cores.Baixa;
+                    ctx.shadowColor = 'rgba(0,0,0,0.1)';
+                    ctx.shadowBlur = 4;
+                    ctx.shadowOffsetX = 1;
+                    ctx.shadowOffsetY = 2;
+                    ctx.fillRect(x, yStart - baixas, barWidth, baixas);
+                    yStart -= baixas;
+                }
+
+                // Barra - Média
+                if (medias > 0) {
+                    ctx.fillStyle = cores.Média;
+                    ctx.shadowColor = 'rgba(0,0,0,0.1)';
+                    ctx.shadowBlur = 4;
+                    ctx.shadowOffsetX = 1;
+                    ctx.shadowOffsetY = 2;
+                    ctx.fillRect(x, yStart - medias, barWidth, medias);
+                    yStart -= medias;
+                }
+
+                // Barra - Alta (topo)
+                if (altas > 0) {
+                    ctx.fillStyle = cores.Alta;
+                    ctx.shadowColor = 'rgba(0,0,0,0.15)';
+                    ctx.shadowBlur = 6;
+                    ctx.shadowOffsetX = 1;
+                    ctx.shadowOffsetY = 2;
+                    ctx.fillRect(x, yStart - altas, barWidth, altas);
+                }
+
+                // Remover sombra
+                ctx.shadowColor = 'transparent';
+                ctx.shadowBlur = 0;
+                ctx.shadowOffsetX = 0;
+                ctx.shadowOffsetY = 0;
+
+                // Borda da barra
+                ctx.strokeStyle = 'rgba(255,255,255,0.3)';
+                ctx.lineWidth = 0.5;
+                ctx.strokeRect(x, margin.top + chartHeight - (total / maxValor) * chartHeight, barWidth, (total / maxValor) *
+                    chartHeight);
+
+                // Valor total acima da barra
+                if (total > 0) {
+                    ctx.fillStyle = '#1b5e20';
+                    ctx.font = 'bold 13px Arial';
+                    ctx.textAlign = 'center';
+                    ctx.fillText(total, x + barWidth / 2, margin.top + chartHeight - (total / maxValor) * chartHeight - 8);
+                }
+
+                // Nome do município
+                ctx.save();
+                ctx.translate(x + barWidth / 2, margin.top + chartHeight + 20);
+                ctx.fillStyle = '#333';
+                ctx.font = '12px Arial';
+                ctx.textAlign = 'center';
+
+                const nomeFormatado = municipio.length > 18 ? municipio.substring(0, 18) + '...' : municipio;
+                ctx.fillText(nomeFormatado, 0, 0);
+                ctx.restore();
+            });
+
+            // Legenda no gráfico (canto superior direito)
+            const legendaX = width - 150;
+            const legendaY = 50;
+            ctx.fillStyle = 'rgba(255,255,255,0.9)';
+            ctx.shadowColor = 'rgba(0,0,0,0.05)';
+            ctx.shadowBlur = 8;
+            ctx.shadowOffsetX = 0;
+            ctx.shadowOffsetY = 2;
+            ctx.fillRect(legendaX, legendaY, 130, 90);
+            ctx.shadowColor = 'transparent';
+            ctx.shadowBlur = 0;
+
+            ctx.strokeStyle = '#e0e0e0';
+            ctx.lineWidth = 1;
+            ctx.strokeRect(legendaX, legendaY, 130, 90);
+
+            const itensLegenda = [
+                { label: 'Alta (≥100ha)', cor: '#d32f2f' },
+                { label: 'Média (50-99ha)', cor: '#ff9800' },
+                { label: 'Baixa (<50ha)', cor: '#4caf50' }
+            ];
+
+            itensLegenda.forEach((item, idx) => {
+                const y = legendaY + 15 + idx * 25;
+                ctx.fillStyle = item.cor;
+                ctx.fillRect(legendaX + 10, y - 6, 14, 14);
+                ctx.fillStyle = '#333';
+                ctx.font = '11px Arial';
+                ctx.textAlign = 'left';
+                ctx.fillText(item.label, legendaX + 30, y + 4);
+            });
+
+            // Linha de base (eixo X)
+            ctx.strokeStyle = '#bdbdbd';
+            ctx.lineWidth = 1.5;
+            ctx.beginPath();
+            ctx.moveTo(margin.left, margin.top + chartHeight);
+            ctx.lineTo(margin.left + chartWidth, margin.top + chartHeight);
+            ctx.stroke();
+        }
+
+        // ==========================
+        // TABELA
+        // ==========================
+        function atualizarTabela(lista = areas) {
+            listaAreas.innerHTML = "";
+
+            if (lista.length === 0) {
+                listaAreas.innerHTML = `
+                    <tr>
+                        <td colspan="7" style="padding: 30px; color: #999;">
+                            <i class="fa-solid fa-inbox" style="font-size: 24px; display: block; margin-bottom: 10px;"></i>
+                            Nenhuma área cadastrada.
+                        </td>
+                    </tr>
+                `;
+                return;
+            }
+
+            lista.forEach((area, index) => {
+                const realIndex = areas.indexOf(area);
+                let classe = "";
+                if (area.prioridade == "Alta") classe = "alta";
+                if (area.prioridade == "Média") classe = "media";
+                if (area.prioridade == "Baixa") classe = "baixa";
+
+                listaAreas.innerHTML += `
+                    <tr onclick="mostrarDetalhes(${realIndex})">
+                        <td>${area.nome}</td>
+                        <td>${area.municipio}</td>
+                        <td>${area.estado}</td>
+                        <td>${area.hectares} ha</td>
+                        <td class="${classe}">${area.prioridade}</td>
+                        <td>${area.dataCadastro || '---'}</td>
+                        <td>
+                            <button class="btn-acao btn-editar" onclick="event.stopPropagation(); editarArea(${realIndex})">
+                                <i class="fa-solid fa-pen"></i>
+                            </button>
+                            <button class="btn-acao btn-excluir" onclick="event.stopPropagation(); excluirArea(${realIndex})">
+                                <i class="fa-solid fa-trash"></i>
+                            </button>
+                        </td>
+                    </tr>
+                `;
+            });
+
+            atualizarCards();
+            atualizarResumo();
+            gerarGrafico();
+        }
+
+        // ==========================
+        // ZOOM DAS IMAGENS - MAPAS
+        // ==========================
+        function abrirZoom(idImagem) {
+            const imgElement = document.getElementById(idImagem);
+            if (!imgElement) return;
+
+            const modalZoom = document.getElementById('modalZoom');
+            const modalImg = document.getElementById('modalZoomImg');
+            const modalTitulo = document.getElementById('modalZoomTitulo');
+
+            // Definir a imagem no modal
+            modalImg.src = imgElement.src;
+            modalImg.alt = imgElement.alt;
+
+            // Definir o título baseado na imagem
+            if (idImagem === 'mapa5') {
+                modalTitulo.textContent = '📍 Mapa das 5 Cidades Monitoradas';
+            } else if (idImagem === 'mapaverde') {
+                modalTitulo.textContent = '🌳 Mapa de Desmatamento Mapeado';
+            } else {
+                modalTitulo.textContent = '🗺️ Mapa Ampliado';
+            }
+
+            // Abrir o modal
+            modalZoom.classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function fecharZoom(event) {
+            if (event && event.target !== event.currentTarget) return;
+            const modalZoom = document.getElementById('modalZoom');
+            modalZoom.classList.remove('active');
+            document.body.style.overflow = '';
+        }
+
+        // Fechar com ESC
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                fecharZoom();
+            }
+        });
+
+        // ==========================
+        // CADASTRO
+        // ==========================
+        form.addEventListener("submit", function(e) {
+            e.preventDefault();
+
+            const nome = document.getElementById("nome").value.trim();
+            const municipio = document.getElementById("municipio").value;
+            const estado = document.getElementById("estado").value;
+            const hectares = document.getElementById("hectares").value;
+
+            if (!nome || !municipio || !hectares) {
+                alert("Preencha todos os campos!");
+                return;
+            }
+
+            const area = {
+                nome: nome,
+                municipio: municipio,
+                estado: estado,
+                hectares: Number(hectares),
+                prioridade: calcularPrioridade(hectares),
+                dataCadastro: dataAtual(),
+                recomendacao: ""
+            };
+
+            const index = parseInt(editIndex.value);
+
+            if (index >= 0 && index < areas.length) {
+                // EDITANDO
+                areas[index] = area;
+                editIndex.value = "-1";
+                btnCancelar.style.display = "none";
+                document.querySelector('.formulario h2').innerHTML = '<i class="fa-solid fa-plus-circle"></i> Cadastrar Nova Área';
+                document.querySelector('.formulario button[type="submit"]').innerHTML = '<i class="fa-solid fa-plus"></i> Cadastrar Área';
+            } else {
+                // NOVO
+                areas.push(area);
+            }
+
+            salvar();
+            atualizarTabela();
+            gerarRecomendacao(area);
+            form.reset();
+            document.getElementById("municipio").value = "";
+        });
+
+        // ==========================
+        // EDITAR ÁREA
+        // ==========================
+        function editarArea(index) {
+            const area = areas[index];
+            document.getElementById("nome").value = area.nome;
+            document.getElementById("municipio").value = area.municipio;
+            document.getElementById("estado").value = area.estado;
+            document.getElementById("hectares").value = area.hectares;
+            editIndex.value = index;
+            btnCancelar.style.display = "inline-flex";
+            document.querySelector('.formulario h2').innerHTML = '<i class="fa-solid fa-pen"></i> Editar Área';
+            document.querySelector('.formulario button[type="submit"]').innerHTML = '<i class="fa-solid fa-save"></i> Salvar Alterações';
+
+            document.querySelector('.formulario').scrollIntoView({ behavior: 'smooth' });
+        }
+
+        // ==========================
+        // CANCELAR EDIÇÃO
+        // ==========================
+        function cancelarEdicao() {
+            editIndex.value = "-1";
+            btnCancelar.style.display = "none";
+            document.querySelector('.formulario h2').innerHTML = '<i class="fa-solid fa-plus-circle"></i> Cadastrar Nova Área';
+            document.querySelector('.formulario button[type="submit"]').innerHTML = '<i class="fa-solid fa-plus"></i> Cadastrar Área';
+            form.reset();
+            document.getElementById("municipio").value = "";
+        }
+
+        // ==========================
+        // EXCLUIR ÁREA
+        // ==========================
+        function excluirArea(index) {
+            if (confirm("Deseja realmente excluir esta área?")) {
+                areas.splice(index, 1);
+                salvar();
+                atualizarTabela();
+                if (areas.length > 0) {
+                    gerarRecomendacao(areas[areas.length - 1]);
+                } else {
+                    resultado.innerHTML = "Cadastre uma área para receber uma recomendação automática.";
+                }
+            }
+        }
+
+        // ==========================
+        // PESQUISA
+        // ==========================
+        pesquisa.addEventListener("keyup", function() {
+            let texto = pesquisa.value.toLowerCase();
+            let filtradas = areas.filter(area => {
+                return area.municipio.toLowerCase().includes(texto);
+            });
+            atualizarTabela(filtradas);
+        });
+
+        // ==========================
+        // MODAL DETALHES
+        // ==========================
+        const modalArea = document.getElementById("modalArea");
+        const detalhesArea = document.getElementById("detalhesArea");
+
+        function mostrarDetalhes(index) {
+            let area = areas[index];
+            if (!area) return;
+
+            detalhesArea.innerHTML = `
+                <h3>${area.nome}</h3>
+                <hr>
+                <p><strong>Município:</strong> ${area.municipio}</p>
+                <p><strong>Estado:</strong> ${area.estado}</p>
+                <p><strong>Área Desmatada:</strong> ${area.hectares} hectares</p>
+                <p><strong>Prioridade:</strong> <span class="${area.prioridade.toLowerCase()}">${area.prioridade}</span></p>
+                <p><strong>Data Cadastro:</strong> ${area.dataCadastro || '---'}</p>
+                <hr>
+                <h4>Recomendação do Sistema</h4>
+                <p>${textoRecomendacao(area.prioridade)}</p>
+                <br>
+                <p style="font-size:12px; color:#999;">ID: ${index + 1}</p>
+            `;
+            modalArea.style.display = "flex";
+        }
+
+        function textoRecomendacao(prioridade) {
+            if (prioridade == "Alta") {
+                return "🔴 Enviar equipe imediatamente, solicitar imagens de satélite e iniciar fiscalização.";
+            }
+            if (prioridade == "Média") {
+                return "🟡 Monitorar a região e programar fiscalização preventiva.";
+            }
+            return "🟢 Continuar monitorando a área periodicamente.";
+        }
+
+        function fecharModal() {
+            modalArea.style.display = "none";
+        }
+
+        window.onclick = function(event) {
+            if (event.target == modalArea) {
+                modalArea.style.display = "none";
+            }
+            if (event.target == document.getElementById("modalAjuda")) {
+                document.getElementById("modalAjuda").style.display = "none";
+            }
+        }
+
+        // ==========================
+        // AJUDA
+        // ==========================
+        function mostrarAjuda() {
+            document.getElementById("modalAjuda").style.display = "flex";
+        }
+
+        function fecharAjuda() {
+            document.getElementById("modalAjuda").style.display = "none";
+        }
+
+        // ==========================
+        // MENU TOGGLE (RESPONSIVO)
+        // ==========================
+        function toggleMenu() {
+            const actions = document.getElementById("headerActions");
+            actions.classList.toggle("active");
+        }
+
+        // ==========================
+        // GERAR PDF
+        // ==========================
+        function gerarPDF() {
+            const { jsPDF } = window.jspdf;
+            const pdf = new jsPDF('p', 'mm', 'a4');
+
+            pdf.setFontSize(22);
+            pdf.setTextColor(27, 94, 32);
+            pdf.text("🌳 ForestDecision", 20, 20);
+
+            pdf.setFontSize(14);
+            pdf.setTextColor(0, 0, 0);
+            pdf.text("Relatório de Áreas Monitoradas", 20, 30);
+            pdf.text(`Gerado em: ${new Date().toLocaleString('pt-BR')}`, 20, 38);
+
+            let y = 50;
+
+            if (areas.length == 0) {
+                pdf.text("Nenhuma área cadastrada.", 20, y);
+            } else {
+                areas.forEach((area, i) => {
+                    // Verificar se precisa de nova página
+                    if (y > 260) {
+                        pdf.addPage();
+                        y = 20;
+                    }
+
+                    pdf.setFontSize(13);
+                    pdf.setTextColor(27, 94, 32);
+                    pdf.text(`Área ${i + 1}: ${area.nome}`, 20, y);
+                    y += 8;
+
+                    pdf.setFontSize(11);
+                    pdf.setTextColor(0, 0, 0);
+                    pdf.text(`   Município: ${area.municipio}`, 20, y);
+                    y += 6;
+                    pdf.text(`   Estado: ${area.estado}`, 20, y);
+                    y += 6;
+                    pdf.text(`   Área Desmatada: ${area.hectares} ha`, 20, y);
+                    y += 6;
+                    pdf.text(`   Prioridade: ${area.prioridade}`, 20, y);
+                    y += 6;
+                    pdf.text(`   Data Cadastro: ${area.dataCadastro || '---'}`, 20, y);
+                    y += 6;
+
+                    // Recomendação
+                    const recomendacao = area.recomendacao || textoRecomendacao(area.prioridade);
+                    pdf.setTextColor(100, 100, 100);
+                    pdf.setFontSize(10);
+                    pdf.text(`   Recomendação: ${recomendacao}`, 20, y);
+                    y += 10;
+
+                    pdf.setDrawColor(200, 200, 200);
+                    pdf.line(20, y - 4, 190, y - 4);
+                    y += 4;
+                });
+            }
+
+            // Rodapé
+            const pageCount = pdf.internal.getNumberOfPages();
+            for (let i = 1; i <= pageCount; i++) {
+                pdf.setPage(i);
+                pdf.setFontSize(9);
+                pdf.setTextColor(150, 150, 150);
+                pdf.text(`ForestDecision © 2026 - Página ${i} de ${pageCount}`, 20, 285);
+            }
+
+            pdf.save("Relatorio_ForestDecision.pdf");
+        }
+
+        // ==========================
+        // INICIAR
+        // ==========================
+        atualizarTabela();
+        if (areas.length > 0) {
+            gerarRecomendacao(areas[areas.length - 1]);
+        }
+
+        // ==========================
+        // ANIMAÇÃO DOS CARDS
+        // ==========================
+        document.querySelectorAll(".card").forEach(card => {
+            card.addEventListener("mouseenter", () => {
+                card.style.transform = "translateY(-8px)";
+            });
+            card.addEventListener("mouseleave", () => {
+                card.style.transform = "translateY(0px)";
+            });
+        });
+
+        // ==========================
+        // REDIMENSIONAR GRÁFICO
+        // ==========================
+        window.addEventListener('resize', function() {
+            if (areas.length > 0) {
+                gerarGrafico();
+            }
+        });
+    </script>
+
+</body>
+
+</html>
